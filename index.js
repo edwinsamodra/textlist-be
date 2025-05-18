@@ -1,19 +1,21 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.MYPORT;
+const IP_ADDRESS = process.env.MYIPADDR;
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
 
-// MongoDB Connection
-mongoose.connect('mongodb://localhost:27017/textlist')
-.then(() => console.log('MongoDB connected successfully'))
-.catch(err => console.error('MongoDB connection error:', err));
+// Connect to MongoDB using environment variable
+mongoose.connect(process.env.MONGODBURI)
+  .then(() => console.log('Connected to MongoDB'))
+  .catch(err => console.error('Could not connect to MongoDB:', err));
 
 // Define Schema
 const textItemSchema = new mongoose.Schema({
@@ -79,6 +81,6 @@ app.delete('/api/items/:id', async (req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(PORT, IP_ADDRESS, () => {
+  console.log(`Server is running on http://${IP_ADDRESS}:${PORT}`);
 });
